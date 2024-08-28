@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(OpenGLTest)
+project(picoflexx_pointcloud)
 
 # Find OpenGL package
 find_package(OpenGL REQUIRED)

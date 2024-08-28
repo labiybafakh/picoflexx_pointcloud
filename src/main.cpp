@@ -12,61 +12,6 @@ royale::String usecase_pico = "MODE_9_25FPS_450";
 
 picoflexx picoflexx_(usecase_pico);
 
-void drawCube() {
-    // Front face (red)
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glBegin(GL_QUADS);
-    glVertex3f(-0.5f, -0.5f, 0.5f);
-    glVertex3f(0.5f, -0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, 0.5f);
-    glVertex3f(-0.5f, 0.5f, 0.5f);
-    glEnd();
-
-    // Back face (green)
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glBegin(GL_QUADS);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f(0.5f, -0.5f, -0.5f);
-    glVertex3f(0.5f, 0.5f, -0.5f);
-    glVertex3f(-0.5f, 0.5f, -0.5f);
-    glEnd();
-
-    // Top face (blue)
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glBegin(GL_QUADS);
-    glVertex3f(-0.5f, 0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, -0.5f);
-    glVertex3f(-0.5f, 0.5f, -0.5f);
-    glEnd();
-
-    // Bottom face (yellow)
-    glColor3f(1.0f, 1.0f, 0.0f);
-    glBegin(GL_QUADS);
-    glVertex3f(-0.5f, -0.5f, 0.5f);
-    glVertex3f(0.5f, -0.5f, 0.5f);
-    glVertex3f(0.5f, -0.5f, -0.5f);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glEnd();
-
-    // Right face (magenta)
-    glColor3f(1.0f, 0.0f, 1.0f);
-    glBegin(GL_QUADS);
-    glVertex3f(0.5f, -0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, -0.5f);
-    glVertex3f(0.5f, -0.5f, -0.5f);
-    glEnd();
-
-    // Left face (cyan)
-    glColor3f(0.0f, 1.0f, 1.0f);
-    glBegin(GL_QUADS);
-    glVertex3f(-0.5f, -0.5f, 0.5f);
-    glVertex3f(-0.5f, 0.5f, 0.5f);
-    glVertex3f(-0.5f, 0.5f, -0.5f);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glEnd();
-}
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
