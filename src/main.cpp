@@ -8,7 +8,9 @@ float angle = 0.0f;
 int numPoints = 38304;
 Eigen::Matrix3Xf pointCloud(3, numPoints);
 
-picoflexx picoflexx_;
+royale::String usecase_pico = "MODE_9_25FPS_450";
+
+picoflexx picoflexx_(usecase_pico);
 
 void drawCube() {
     // Front face (red)
@@ -74,7 +76,7 @@ void display() {
               0.0f, 0.0f, 0.0f,  // Look at position
               0.0f, 1.0f, 0.0f); // Up vector
 
-    glRotatef(angle, 1.0f, 1.0f, 1.0f);
+    // glRotatef(angle, 1.0f, 1.0f, 1.0f);
     // drawCube();
     picoflexx_.displayData();
 
@@ -90,27 +92,23 @@ void reshape(int w, int h) {
 }
 
 void timer(int value) {
-    angle += 2.0f;
-    if (angle > 360.0f) {
-        angle -= 360.0f;
-    }
     glutPostRedisplay();
-    glutTimerFunc(16, timer, 0); // 60 FPS
+    glutTimerFunc(1, timer, 0); // 1000 FPS
 }
 
 int main(int argc, char** argv) {
-    // glutInit(&argc, argv);
-    // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    // glutInitWindowSize(800, 600);
-    // glutCreateWindow("OpenGL FreeGLUT Rotating Cube");
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(800, 600);
+    glutCreateWindow("Picoflexx");
 
 
-    // glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 
-    // glutDisplayFunc(display);
-    // glutReshapeFunc(reshape);
-    // glutTimerFunc(0, timer, 0);
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutTimerFunc(1, timer, 0);
 
-    // glutMainLoop();
+    glutMainLoop();
     return 0;
 }

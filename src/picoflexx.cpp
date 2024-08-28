@@ -1,9 +1,10 @@
 #include "picoflexx.hpp"
 
-picoflexx::picoflexx(){
+picoflexx::picoflexx(royale::String picoflexx_fps){
     if(!setUpCamera()) {
         std::cerr << "Can't setup camera";
     }
+    picoflexx_fps_ = picoflexx_fps;
 }
 
 picoflexx::~picoflexx(){}
@@ -47,27 +48,28 @@ bool picoflexx::setUpCamera()
         return false;
     }
 
-    // ret = m_cameraDevice->setUseCase ("MODE_9_25FPS_450") != CameraStatus::SUCCESS;
-    // if (ret != royale::CameraStatus::SUCCESS)
-    // {
-    //     std::cout << "Cannot set usecase: " << static_cast<int> (ret) << std::endl;
-    //     return false;
-    // }
+    ret = m_cameraDevice->setUseCase(picoflexx_fps_);
+    if (ret != royale::CameraStatus::SUCCESS)
+    {
+        std::cout << "Cannot set usecase: " << static_cast<int> (ret) << std::endl;
+        return false;
+    }
+
 
     return true;
 }
 
 void picoflexx::onNewData (const royale::DepthData *data){
-    std::cout << data->points.size();
+    // std::cout << data->points.size();
 
-    depthData_ = data;
-
+    depth_data_ = data;
 }
 
-void picoflexx::displayData(const royale::DepthData *depthData){
-    for (auto currentPoint : depthData_){
+void picoflexx::displayData(){
+    for (auto currentPoint : depth_data_->points){
         glBegin(GL_POINTS);
         glVertex3f(currentPoint.x, currentPoint.y, currentPoint.z);
         glEnd();
     }
+    std::chrono::milliseconds(1);
 }
