@@ -39,19 +39,11 @@ bool picoflexx::setUpCamera()
         return false;
     }
 
-    // start capturing
-    ret = m_cameraDevice->startCapture();
-    if (ret != royale::CameraStatus::SUCCESS)
-    {
-        std::cout << "Cannot start capturing: " << static_cast<int> (ret) << std::endl;
-        return false;
-    }
-
      royale::Vector<royale::String> useCases;
      auto usecase_ = m_cameraDevice->getUseCases(useCases);
 
      for(size_t i=0; i < useCases.size(); i++){
-        if(useCases[i] == "MODE_9_25FPS_450") desired_usecase_index = i;
+        if(useCases[i] == "MODE_9_15FPS_700") desired_usecase_index = i;
      }
 
     ret = m_cameraDevice->setUseCase(useCases[desired_usecase_index]);
@@ -62,6 +54,38 @@ bool picoflexx::setUpCamera()
     }
     else{
         std::cout << "Use Case:  " << useCases[desired_usecase_index] << std::endl;
+    }
+    
+     // Retrieve the IDs of the different streams
+    royale::Vector<royale::StreamId> streamIds;
+    if (m_cameraDevice->getStreams (streamIds) != royale::CameraStatus::SUCCESS)
+    {
+        std::cerr << "Error retrieving streams" << std::endl;
+        return 1;
+    }
+ 
+    std::cout << "Stream IDs : ";
+    for (auto curStream : streamIds)
+    {
+        std::cout << curStream << ", ";
+    }
+    std::cout << std::endl;
+    
+    if (m_cameraDevice->setExposureTime (50, streamIds[0]) != royale::CameraStatus::SUCCESS)
+    {
+        std::cerr << "Cannot set exposure time for stream" << streamIds[0] << std::endl;
+    }
+    else
+    {
+        std::cout << "Changed exposure time for stream " << streamIds[0] << " to 200 microseconds ..." << std::endl;
+    }
+
+        // start capturing
+    ret = m_cameraDevice->startCapture();
+    if (ret != royale::CameraStatus::SUCCESS)
+    {
+        std::cout << "Cannot start capturing: " << static_cast<int> (ret) << std::endl;
+        return false;
     }
 
     return true;
@@ -75,9 +99,11 @@ void picoflexx::onNewData (const royale::DepthData *data){
 
 void picoflexx::displayData(){
     for (auto currentPoint : depth_data_->points){
-        glBegin(GL_POINTS);
-        glVertex3f(currentPoint.x, currentPoint.y, currentPoint.z);
-        glEnd();
+        if(currentPoint.depthConfidence > 1){
+            glBegin(GL_POINTS);
+            glVertex3f(currentPoint.x, currentPoint.y, currentPoint.z);
+            glEnd();
+        }
     }
     std::chrono::milliseconds(1);
 }
