@@ -1,10 +1,9 @@
 #include "picoflexx.hpp"
 
-picoflexx::picoflexx(royale::String picoflexx_fps){
+picoflexx::picoflexx(){
     if(!setUpCamera()) {
         std::cerr << "Can't setup camera";
     }
-    picoflexx_fps_ = picoflexx_fps;
 }
 
 picoflexx::~picoflexx(){}
@@ -48,13 +47,22 @@ bool picoflexx::setUpCamera()
         return false;
     }
 
-    ret = m_cameraDevice->setUseCase(picoflexx_fps_);
+     royale::Vector<royale::String> useCases;
+     auto usecase_ = m_cameraDevice->getUseCases(useCases);
+
+     for(size_t i=0; i < useCases.size(); i++){
+        if(useCases[i] == "MODE_9_25FPS_450") desired_usecase_index = i;
+     }
+
+    ret = m_cameraDevice->setUseCase(useCases[desired_usecase_index]);
     if (ret != royale::CameraStatus::SUCCESS)
     {
         std::cout << "Cannot set usecase: " << static_cast<int> (ret) << std::endl;
         return false;
     }
-
+    else{
+        std::cout << "Use Case:  " << useCases[desired_usecase_index] << std::endl;
+    }
 
     return true;
 }

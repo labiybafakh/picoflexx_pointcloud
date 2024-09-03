@@ -14,7 +14,7 @@ class picoflexx: public royale::IDepthDataListener{
     public:
         void onNewData (const royale::DepthData *data) override;
         void displayData();
-        picoflexx(royale::String picoflexx_fps);
+        picoflexx();
         ~picoflexx();
     private:
         bool setUpCamera();
@@ -22,7 +22,7 @@ class picoflexx: public royale::IDepthDataListener{
         int iterX, iterY, iterZ;
         int pointcloud_size_;
         const royale::DepthData *depth_data_;
-        royale::String picoflexx_fps_;
+        size_t desired_usecase_index;
 
 };
 

@@ -8,9 +8,7 @@ float angle = 0.0f;
 int numPoints = 38304;
 Eigen::Matrix3Xf pointCloud(3, numPoints);
 
-royale::String usecase_pico = "MODE_9_25FPS_450";
-
-picoflexx picoflexx_(usecase_pico);
+picoflexx picoflexx_;
 
 
 void display() {
