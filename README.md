@@ -3,7 +3,7 @@
 ### How to build
 ```bash
 mkdir build && cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=../third_party/libroyale-5.12.0.3089-LINUX-x86-64Bit/lib
 cmake --build .
 ```
 
@@ -11,6 +11,7 @@ cmake --build .
 ```bash
 ./picoflexx_pointcloud
 ```
+
 
 ### Usecase
 - MODE_9_5FPS_2000

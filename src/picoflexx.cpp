@@ -87,23 +87,38 @@ bool picoflexx::setUpCamera()
         std::cout << "Cannot start capturing: " << static_cast<int> (ret) << std::endl;
         return false;
     }
+    std::cout << "Start capturing... " << std::endl;
+
 
     return true;
 }
 
 void picoflexx::onNewData (const royale::DepthData *data){
-    // std::cout << data->points.size();
 
     depth_data_ = data;
 }
 
-void picoflexx::displayData(){
-    for (auto currentPoint : depth_data_->points){
-        if(currentPoint.depthConfidence > 1){
-            glBegin(GL_POINTS);
-            glVertex3f(currentPoint.x, currentPoint.y, currentPoint.z);
-            glEnd();
+std::vector<point3d> picoflexx::getPointCloud(){
+
+    std::vector<point3d> point_cloud_data;
+
+    // if (!depth_data_) return;
+
+    auto nums_points = depth_data_->getNumPoints();
+
+    // glBegin(GL_POINTS);
+    for (size_t i = 0; i < nums_points; ++i) {
+        // const auto& pt = depth_data_->points[i];
+        if (depth_data_->getLegacyPoint(i).depthConfidence > 1) {
+            point3d point;
+            point.x = depth_data_->getLegacyPoint(i).x;
+            point.y = depth_data_->getLegacyPoint(i).y;
+            point.z = depth_data_->getLegacyPoint(i).z;
+            point_cloud_data.emplace_back(point);
+            // glVertex3f(depth_data_->getLegacyPoint(i).x, depth_data_->getLegacyPoint(i).y, depth_data_->getLegacyPoint(i).z);
         }
     }
-    std::chrono::milliseconds(1);
+    // glEnd();
+
+    return point_cloud_data;
 }

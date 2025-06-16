@@ -8,12 +8,18 @@
 #include <chrono>
 #include <vector>
 #include <string.h>
+#include <math.h>
 
+struct point3d{
+    float x;
+    float y;
+    float z;
+};
 
 class picoflexx: public royale::IDepthDataListener{
     public:
         void onNewData (const royale::DepthData *data) override;
-        void displayData();
+        std::vector<point3d> getPointCloud();
         picoflexx();
         ~picoflexx();
     private:
