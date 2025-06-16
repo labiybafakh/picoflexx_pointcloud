@@ -10,13 +10,14 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(Iridescence REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common filters)
+find_package(PCL REQUIRED)
 
 
 # Add executable
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/picoflexx.cpp
+    src/pointcloud_utils.cpp
 )
 
 # Include directories

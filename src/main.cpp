@@ -2,11 +2,7 @@
 #include <cmath>
 #include "picoflexx.hpp"
 #include <Eigen/Dense>
-#include <pcl/point_types.h>
-#include <pcl/point_cloud.h>
-#include <pcl/filters/voxel_grid.h>
-
-
+#include "pointcloud_utils.hpp"
 
 float angle = 0.0f;
 int numPoints = 38304;
@@ -14,6 +10,7 @@ Eigen::Matrix3Xf pointCloud(3, numPoints);
 
 picoflexx picoflexx_;
 
+PointCloudUtils pc_utils;
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -23,29 +20,11 @@ void display() {
               0.0f, 0.0f, 0.0f,
               0.0f, 1.0f, 0.0f);
 
-    const auto& cloud = picoflexx_.getPointCloud();
+    auto cloud = picoflexx_.getPointCloud();
+    auto pcl_cloud = pc_utils.convertToPCL(cloud);
+    auto downsampled = pc_utils.downsamplePCL(pcl_cloud);
 
-    // Convert to PCL point cloud
-    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    for (const auto& pt : cloud) {
-        pcl_cloud->points.emplace_back(pt.x, pt.y, pt.z);
-    }
-    pcl_cloud->width = pcl_cloud->points.size();
-    pcl_cloud->height = 1;
-    pcl_cloud->is_dense = false;
-
-    // Downsample using VoxelGrid
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::VoxelGrid<pcl::PointXYZ> sor;
-    sor.setInputCloud(pcl_cloud);
-    sor.setLeafSize(0.01f, 0.01f, 0.01f); // Adjust voxel size as needed
-    sor.filter(*cloud_filtered);
-
-    glBegin(GL_POINTS);
-    for (const auto& pt : cloud_filtered->points) {
-        glVertex3f(pt.x, pt.y, pt.z);
-    }
-    glEnd();
+    pc_utils.visualizePCL(downsampled);
 
     glutSwapBuffers();
 }
@@ -68,7 +47,6 @@ int main(int argc, char** argv) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
     glutCreateWindow("Picoflexx");
-
 
     glEnable(GL_DEPTH_TEST);
 
