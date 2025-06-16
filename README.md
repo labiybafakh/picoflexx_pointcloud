@@ -3,7 +3,7 @@
 ### How to build
 ```bash
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=../third_party/libroyale-5.12.0.3089-LINUX-x86-64Bit/lib
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/path-to-royale/lib/cmake
 cmake --build .
 ```
 

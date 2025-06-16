@@ -9,7 +9,6 @@ find_package(royale REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-find_package(Iridescence REQUIRED)
 find_package(PCL REQUIRED)
 
 
@@ -27,7 +26,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${OPENGL_INCLUDE_DIRS}
     ${GLUT_INCLUDE_DIRS}
     ${EIGEN3_INCLUDE_DIR}
-    Iridescence::Iridescence
     ${PCL_INCLUDE_DIRS}
 )
 
