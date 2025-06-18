@@ -12,19 +12,49 @@ picoflexx picoflexx_;
 
 PointCloudUtils pc_utils;
 
-void display() {
+int win_downsampled, win_mesh;
+
+
+void displayDownsampled() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-
-    gluLookAt(0.0f, 0.0f, 3.0f,
-              0.0f, 0.0f, 0.0f,
-              0.0f, 1.0f, 0.0f);
+    gluLookAt(0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
     auto cloud = picoflexx_.getPointCloud();
     auto pcl_cloud = pc_utils.convertToPCL(cloud);
-    auto downsampled = pc_utils.downsamplePCL(pcl_cloud);
+    auto downsampled_pcl_cloud = pc_utils.downsamplePCL(pcl_cloud, 0.012);
 
-    pc_utils.visualizePCL(downsampled);
+    auto clusters = pc_utils.regionGrowingSegmentation(downsampled_pcl_cloud);
+    std::cout << "Clusters: " << clusters.size() << std::endl;
+    int colorIdx = 0;
+    for (const auto& cluster : clusters) {
+        float r = static_cast<float>((colorIdx * 77) % 255) / 255.0f;
+        float g = static_cast<float>((colorIdx * 151) % 255) / 255.0f;
+        float b = static_cast<float>((colorIdx * 211) % 255) / 255.0f;
+        glColor3f(r, g, b);
+        glBegin(GL_POINTS);
+        for (int idx : cluster.indices) {
+            const auto& pt = downsampled_pcl_cloud.points[idx];
+            glVertex3f(pt.x, pt.y, pt.z);
+        }
+        glEnd();
+        colorIdx++;
+    }
+
+    glutSwapBuffers();
+}
+
+void displayMesh() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    gluLookAt(0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+    auto cloud = picoflexx_.getPointCloud();
+    auto pcl_cloud = pc_utils.convertToPCL(cloud);
+    auto downsampled_pcl_cloud = pc_utils.downsamplePCL(pcl_cloud, 0.012);
+
+    pcl::PolygonMesh mesh = pc_utils.greedyTriangulation(downsampled_pcl_cloud);
+    pc_utils.visualizeMesh(mesh);
 
     glutSwapBuffers();
 }
@@ -38,21 +68,33 @@ void reshape(int w, int h) {
 }
 
 void timer(int value) {
+    glutSetWindow(win_downsampled);
     glutPostRedisplay();
-    glutTimerFunc(1, timer, 0); // 1000 FPS
+    glutSetWindow(win_mesh);
+    glutPostRedisplay();
+    glutTimerFunc(60, timer, 0); // ~60 FPS
 }
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+
+    // First window: Downsampled point cloud
     glutInitWindowSize(800, 600);
-    glutCreateWindow("Picoflexx");
-
+    win_downsampled = glutCreateWindow("Downsampled Point Cloud");
     glEnable(GL_DEPTH_TEST);
-
-    glutDisplayFunc(display);
+    glutDisplayFunc(displayDownsampled);
     glutReshapeFunc(reshape);
-    glutTimerFunc(1, timer, 0);
+
+    // Second window: Mesh
+    glutInitWindowSize(800, 600);
+    win_mesh = glutCreateWindow("Mesh");
+    glEnable(GL_DEPTH_TEST);
+    glutDisplayFunc(displayMesh);
+    glutReshapeFunc(reshape);
+
+    // Start timer ONCE (it will update both windows)
+    glutTimerFunc(60, timer, 0);
 
     glutMainLoop();
     return 0;
